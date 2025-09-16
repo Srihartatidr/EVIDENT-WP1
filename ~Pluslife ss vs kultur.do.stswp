@@ -1,0 +1,16 @@
+//Agreement with Xpert (variabel tcm_result untuk sputum, res_xpertultra untuk SS)
+clear
+use "D:\EVIDENT WP1 Data\250517_pluslife ss vs xpert.dta"
+browse tcm_type tcm_result
+//mengeluarkan BD Max dan not done
+keep if tcm_type==1
+//80 obs deleted
+
+gen xpert_sputum=999
+sort tcm_result
+browse tcm_result xpert_sputum
+replace xpert_sputum=1 if tcm_result==0
+replace xpert_sputum=2 if tcm_result==1 | tcm_result==2 | tcm_result==3 | tcm_result==4 | tcm_result==5 | tcm_result==7 | tcm_result==8
+drop if tcm_result==. | tcm_re
+
+

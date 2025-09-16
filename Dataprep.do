@@ -6,14 +6,14 @@ use "C:\Users\rcund\Documents\1. EVIDENT\1. WP1 - Clinical Validation Studies\Da
 
 //Cek data total baseline dan follow-up
 browse
-//obs=1,101
+//obs=1,291
 
 //BASELINE DATA
 keep if redcap_event_name=="baseline_arm_1"
 //obs=1,084
 
 tab willing
-//Ya=1,032, Tidak=52
+//Ya=1,220, Tidak=54
 
 tab refusing
 sort refusing

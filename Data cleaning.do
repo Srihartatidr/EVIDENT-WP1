@@ -1,6 +1,7 @@
 // cek pasien baseline dan FU
 tab redcap_event_name
-// 1143 obs
+// 1357 obs
+// 1340 baseline
 // 17 fu
 
 // drop pasien di arm fu //
@@ -9,10 +10,11 @@ drop if redcap_event_name=="fu_arm_2"
 sort interv_dt
 br
 
-//hitung jumlah pasien yang eligible dan consent //
+//hitung jumlah pasien yang eligible//
 tab willing, m
-// 1170 yes
-// 53 no
+// total 1352 obs
+// 1293 yes
+// 55 no
 
 // eksklusi pasien dgn riwayat TB dalam 2 tahun terakhir //
 gen tbhistdur=interv_dt-diag_tb_y
@@ -26,19 +28,21 @@ replace tbhist2years=1 if idsubject==4100068
 tab tbhist2years, m 
 // 18 obs
 
+// drop pasien eksklusi karena on OAT > 1 minggu //
+drop if idsubject==4100074 | idsubject==4100455 | idsubject==4100689 | idsubject==4100974
+
 // menghitung pasien yang menolak dan alasannya //
 sort willing refusing idsubject
 
 generate refusereason=.
-replace refusereason=1 if refusing=="Sedang terburu-buru" | refusing=="Karena sudah ada hasil dan mau pulang " | refusing=="Sedang terburu-buru" | refusing=="Pasien diburu waktu karena harus ke faskes lain" | refusing=="Pasien sudah terlanjur pulang" | refusing=="Pasien tidak mau menunggu lama" | refusing=="Sedang terburu-buru" | refusing=="Takut lama nunggunya, karena mau cepat pulang" | refusing=="Tidak mau menunggu lama" | refusing=="sudah mau pulang " | refusing=="Orang tua sedang terburu-buru kerja" | refusing=="Terburu-buru pulang karena harus merawat orang tua yang sakit di rumah" | refusing=="Terburu-buru pulang karena ada kesibukan lain" | refusing=="Karena ingin cepat pulang, dan meneruma hasil bahwa anaknya terdiagnosis TB" | refusing=="Lagi buru-buru karena suami kerja dan dirumah ada yang sakit" | refusing=="Harus ke faskes selanjutnya" | refusing=="Lagi buru-buru karena suami kerja dan dirumah ada yang sakit" | refusing=="Sedang masa pemulihan dan setelah keluar dari RS banyak kegiatan " | refusing=="Karena sedang buru-buru& menunggu hasil pemeriksaan dokter" | refusing=="Pasien sedang terburu-buru" 
-replace refusereason=2 if refusing=="Merasa tidak sehat" | refusing=="Badan terasa lemas dan pusing" | refusing=="Badan terasa lemas dan pusing" | refusing=="sedang masa pemulihan dan setelah keluar dari RS banyak kegiatan " | refusing=="pasien masih banyak tindakan yang dilakukan, takut drop dan kondisi lemas sehabis pungsi" | refusing=="pasien lemas, dari sumedang" | refusing=="pasien lemas, Terburu buru ingin pulang (dari sumedang)"
-replace refusereason=3 if refusing=="Takut diambil darah" | refusing=="Pasien merasa kurang nyaman" | refusing=="Takut disuntik" | refusing=="Cemas dan takut " | refusing=="Takut dilakukan pemeriksaan" | refusing=="Karena punya riwayat trauma ketika swab covid-19 jadi tidak mau diperiksa"
-replace refusereason=4 if refusing=="Tidak terektrut" | refusing=="pasien datang hampir jam 3 sore, jadi tidak terekrut" | refusing=="sudah mau pulang"
+replace refusereason=1 if refusing=="Sedang terburu-buru" | refusing=="Karena sudah ada hasil dan mau pulang " | refusing=="Sedang terburu-buru" | refusing=="Pasien diburu waktu karena harus ke faskes lain" | refusing=="Pasien sudah terlanjur pulang" | refusing=="Pasien tidak mau menunggu lama" | refusing=="Sedang terburu-buru" | refusing=="Takut lama nunggunya, karena mau cepat pulang" | refusing=="Tidak mau menunggu lama" | refusing=="sudah mau pulang " | refusing=="Orang tua sedang terburu-buru kerja" | refusing=="Terburu-buru pulang karena harus merawat orang tua yang sakit di rumah" | refusing=="Terburu-buru pulang karena ada kesibukan lain" | refusing=="Karena ingin cepat pulang, dan meneruma hasil bahwa anaknya terdiagnosis TB" | refusing=="Lagi buru-buru karena suami kerja dan dirumah ada yang sakit" | refusing=="Harus ke faskes selanjutnya" | refusing=="Lagi buru-buru karena suami kerja dan dirumah ada yang sakit" | refusing=="Sedang masa pemulihan dan setelah keluar dari RS banyak kegiatan " | refusing=="Karena sedang buru-buru& menunggu hasil pemeriksaan dokter" | refusing=="Pasien sedang terburu-buru" | refusing=="Karena ingin cepat pulang, dan menerima hasil bahwa anaknya terdiagnosis TB" | refusing=="Orang tua pasien sedang terburu-buru dan merasa sudah cukup dengan pemeriksaan DPJP" 
+replace refusereason=2 if refusing=="Merasa tidak sehat" | refusing=="Badan terasa lemas dan pusing" | refusing=="Badan terasa lemas dan pusing" | refusing=="sedang masa pemulihan dan setelah keluar dari RS banyak kegiatan " | refusing=="pasien masih banyak tindakan yang dilakukan, takut drop dan kondisi lemas sehabis pungsi" | refusing=="pasien lemas, dari sumedang" | refusing=="pasien lemas, Terburu buru ingin pulang (dari sumedang)" | refusing=="Pasien masih banyak tindakan yang dilakukan, takut drop dan kondisi lemas sehabis pungsi"
+replace refusereason=3 if refusing=="Takut diambil darah" | refusing=="Pasien merasa kurang nyaman" | refusing=="Takut disuntik" | refusing=="Cemas dan takut " | refusing=="Takut dilakukan pemeriksaan" | refusing=="Karena punya riwayat trauma ketika swab covid-19 jadi tidak mau diperiksa" | refusing=="Takut kesehatan menurun (drop) saat mengetahui hasil"
+replace refusereason=4 if refusing=="Tidak terektrut" | refusing=="pasien datang hampir jam 3 sore, jadi tidak terekrut" | refusing=="sudah mau pulang" | refusing=="Pasien datang hampir jam 3 sore, jadi tidak terekrut"
 replace refusereason=5 if refusing=="Ingin fokus ke pengobatan. Tidak diizinkan Suami" | refusing=="Keluarga tidak mengizinkan " | refusing=="Keluarga menolak" | refusing=="Ingin fokus ke pengobatan dan tidak boleh sama keluarga ikut dalam penelitian pengambilan sampel" | refusing=="Keluarga tidak menyetujui dan tidak kooperatif"
-replace refusereason=6 if refusing=="Takut kesehatan menurun (drop) saat mengetahui hasil"
 replace refusereason=7 if refusing=="karena keluhan sudah sembuh, tidak memerlukan pemeriksaan lain" | refusing=="Sudah pernah melakukan pemeriksaan kesehatan lengkap dan hasilnya sehat. Ingin menghabiskan obat dulu dari puskesmas."
 replace refusereason=8 if refusing=="Pasien menyerahkan pemeriksaan kepada dokter dan tidak bersedia diambil sampel lagi" | refusing=="Tidak mau dilakukan pemeriksaan tambahan diluar dokter spesialis" | refusing=="Tidak berkenan diikut sertakan dalam kegiatan penelitian" | refusing=="Tidak mau diambil sampel pemeriksaan" | refusing=="Ingin fokus pemeriksaan yang disarankan oleh dokter" |refusing=="Tidak berkenan menjadi subjek penelitian" | refusing=="Tidak mau dilakukan pemeriksaan tambahan diluar prosedur DPJP"
-replace refusereason=9 if refusing=="Tidak bersedia menjadi subjek penelitian dan hanya ingin melakukan pemeriksaan dari dokter" | refusing=="Tidak mau dilakukan pemeriksaan tambahan diluar DPJP" | refusing=="Sudah merasa cukup dengan pemeriksaan yang sudah diakukan sebeumnya" | refusing=="Karena sudah cukup dengan pemeriksaan dari dokter." | refusing=="Sudah merasa cukup dengan pemeriksaan yang sudah dilakukan sebelumnya"
+replace refusereason=9 if refusing=="Tidak bersedia menjadi subjek penelitian dan hanya ingin melakukan pemeriksaan dari dokter" | refusing=="Tidak mau dilakukan pemeriksaan tambahan diluar DPJP" | refusing=="Sudah merasa cukup dengan pemeriksaan yang sudah diakukan sebeumnya" | refusing=="Karena sudah cukup dengan pemeriksaan dari dokter." | refusing=="Sudah merasa cukup dengan pemeriksaan yang sudah dilakukan sebelumnya" | refusing=="Tidak berkenan diikut sertakan dalam kegiatan penelitian."
 
 br interv_dt idsubject willing rec_loc refusing refusereason
 sort refusereason refusing
@@ -51,17 +55,14 @@ tab refusereason, m
 // drop pasien dgn riw TB 2 tahun //
 drop if tbhist2years==1
 
-// drop pasien eksklusi karena on OAT > 1 minggu //
-drop if idsubject==4100074 | idsubject==4100455 | idsubject==4100689 | idsubject==4100974
-
 // hitung jumlah pasien per kategori umur //
 //membagi pasien menjadi 2 kategori umur (cutoff 15 tahun) //
-generate agecat=.
-replace agecat=1 if age<15
-replace agecat=2 if age>=15
-label define agecatlab 1 "Usia 0-14 tahun" 2 "Usia 15+ tahun"
-label values agecat agecatlab
-tab willing agecat, m col
+generate agecat15=.
+replace agecat15=1 if age<15
+replace agecat15=2 if age>=15
+label define agecat15lab 1 "Usia 0-14 tahun" 2 "Usia 15+ tahun"
+label values agecat15 agecat15lab
+tab willing agecat15, m col
 
 br
 sort interv_dt
@@ -76,11 +77,6 @@ label values recloc recloclab
 tab willing recloc, m col
 
 tab recloc agecat, m
-
-// membagi pasien menjadi sampling 30 detik //
-gen sampling30= .
-replace sampling30=0 if interv_dt<td(30jan2025)
-replace sampling30=1 if interv_dt>=td(30jan2025)
 
 // membuat bulan dan tahun //
 gen month = ym(year(interv_dt), month(interv_dt))
@@ -107,7 +103,9 @@ replace month=2 in 597/696
 replace month=3 in 697/788
 replace month=4 in 789/934
 replace month=5 in 935/1058
-replace month=6 in 1059/1121
+replace month=6 in 1059/1166
+replace month=7 in 1167/1272
+replace month=19 in 1273/1317
 
 // hitung rekrutmen pasien per bulan //
 // agustus
@@ -154,11 +152,24 @@ tab willing recloc if month==5
 tab willing recloc if month==6 & agecat==1
 tab willing recloc if month==6 & agecat==2
 tab willing recloc if month==6
+// juli
+tab willing recloc if month==7 & agecat==1
+tab willing recloc if month==7 & agecat==2
+tab willing recloc if month==7
+// september
+tab willing recloc if month==19 & agecat==1
+tab willing recloc if month==19 & agecat==2
+tab willing recloc if month==19
 // total
 tab willing recloc if agecat==1, col
 tab willing recloc if agecat==2, col
 tab willing, m
 tab willing agecat, m
+
+// aug 2024 - apr 2025
+tab willing recloc if (month==8 | month==9 | month==10 | month==11 | month==12 | month==1 | month==2 | month==3 | month==4) & agecat==1
+tab willing recloc if (month==8 | month==9 | month==10 | month==11 | month==12 | month==1 | month==2 | month==3 | month==4) & agecat==2
+tab willing recloc if (month==8 | month==9 | month==10 | month==11 | month==12 | month==1 | month==2 | month==3 | month==4)
 
 // rekrutmen per jenis fasyankes lebih rinci //
 // total
@@ -169,45 +180,6 @@ tab willing agecat, m
 
 // membuang pasien yang tidak consent // 
 drop if willing==0
-
-// membuat kategori sampel fresh atau bioarchive //
-describe dt_swab_pluslife dt_resswab_pluslife
-gen dtswabpluslife = dofc(dt_swab_pluslife)
-gen dtresswabpluslife = dofc(dt_resswab_pluslife)
-format dtswabpluslife dtresswabpluslife %td
-
-gen selisih_hari=dtresswabpluslife-dtswabpluslife
-gen plts_type=.
-br idsubject dt_swab_pluslife dt_resswab_pluslife selisih_hari plts_type
-sort selisih_hari
-replace plts_type=1 if selisih_hari<=7 & !missing(selisih_hari)
-replace plts_type=2 if selisih_hari>7 & !missing(selisih_hari)
-label define sampletypelab 1 "Fresh" 2 "Bioarchive"
-label values plts_type sampletypelab
-
-// data sources and type of specimen
-tab xpertultra, m
-tab xpertultra rec_loc, m row
-list idsubject if xpertultra==1 & rec_loc==.
-tab xpertultra diag_tb, m row
-tab res_xpertultra rec_loc
-tab res_xpertultra diag_tb
-
-tab fujilam rec_loc, m row
-list idsubject initial if fujilam==. & rec_loc==1
-tab fujilam diag_tb, m row
-tab res_fujilam rec_loc
-tab res_fujilam diag_tb
-
-tab swab_pluslife rec_loc, m row
-tab swab_pluslife diag_tb, m row
-tab res_swab_pluslife rec_loc
-tab res_swab_pluslife diag_tb
-
-tab sput_pluslife rec_loc, m row
-tab sput_pluslife diag_tb, m row
-tab res_sput_pluslife rec_loc
-tab res_sput_pluslife diag_tb
 
 // data cleaning //
 tab sex willing, m
@@ -235,7 +207,7 @@ sktest age
 summarize age, d
 codebook age
 
-tab agecat5, m
+tab agecat15, m
 
 drop if willing==0
 tab cough, m
@@ -259,6 +231,8 @@ tab contact, m
 tab contact_y if contact==1
 sort contact_y
 list idsubject initial birthdate contact_y interv_dt if contact==1
+gen kontak_sebelum_lahir = contact_y < birthdate
+list idsubject initial birthdate contact_y if kontak_sebelum_lahir == 1
 tab hiv, m
 tab dm, m
 tab smoke, m
@@ -285,6 +259,8 @@ summarize upper_armc, d
 sort upper_armc
 list idsubject weight upper_armc if upper_armc>25 & upper_armc!=.
 tab systolicbp, m
+list idsubject age initial systolicbp if (systolicbp<60 | systolicbp >190) & systolicbp!=. & systolicbp!=0
+list idsubject initial systolicbp if (systolicbp<60 | systolicbp >190) & systolicbp!=. & systolicbp!=0
 list idsubject age initial if systolicbp==.
 
      | idsubj~t   age   initial |
@@ -395,20 +371,20 @@ histogram resp, normal
 sktest resp
 list idsubject initial age resp if resp>=40
 
-     +---------------------------------+
-     | idsubj~t   initial   age   resp |
-     |---------------------------------|
-  3. |  4100538        SM     2      . |
-  8. |  4100539        SM     1      . |
- 10. |  4100738        SM     1      . |
- 12. |  4100725        SM     1      . |
- 31. |  4100583        SM     4      . |
-     |---------------------------------|
- 33. |  4100524        SM     2      . |
- 35. |  4100708        SM     4     88 |
- 43. |  4100553        SM     5      . |
-223. |  4100736        SM     9      . |
-     +---------------------------------+
+      +---------------------------------+
+      | idsubj~t   initial   age   resp |
+      |---------------------------------|
+ 504. |  4101024        SM     6      . |
+1205. |  4100958       HAR     0     40 |
+1268. |  4101453               .      . |
+1269. |  4101304       HAR    65      . |
+1270. |  4101270        SM     1      . |
+      |---------------------------------|
+1271. |  4101271        SM     1      . |
+1272. |  4101440               .      . |
+1273. |  4101339               .      . |
+1274. |  4101452               .      . |
+      +---------------------------------+
 
 tab spo2, m
 list idsubject initial age if spo2==. & age>=4
@@ -430,80 +406,17 @@ tab cxray, m
 Hasil pembacaan rontgen |
                    dada |      Freq.     Percent        Cum.
 ------------------------+-----------------------------------
-                 Normal |         37        5.60        5.60
-      Sugestif TB aktif |        357       54.01       59.61
-       Sugestif TB lama |         33        4.99       64.60
-Tidak normal - bukan TB |        184       27.84       92.44
-   Menolak rontgen dada |          1        0.15       92.59
-                      . |         49        7.41      100.00
+                 Normal |        152       12.05       12.05
+      Sugestif TB aktif |        597       47.34       59.40
+       Sugestif TB lama |         50        3.97       63.36
+Tidak normal - bukan TB |        408       32.36       95.72
+   Menolak rontgen dada |         13        1.03       96.75
+                      . |         41        3.25      100.00
 ------------------------+-----------------------------------
-                  Total |        661      100.00
+                  Total |      1,261      100.00
 
 sort interv_dt
 list idsubject initial interv_dt if cxray==.
-
-     +----------------------------------------+
-     | idsubj~t   initial           interv_dt |
-     |----------------------------------------|
-286. |  4100370        SM    November 6, 2024 |
-293. |  4100375        SM    November 7, 2024 |
-351. |  4100512       YFH   November 20, 2024 |
-352. |  4100509        SM   November 20, 2024 |
-378. |  4100288       RVT    December 2, 2024 |
-     |----------------------------------------|
-392. |  4100295       KDP    December 4, 2024 |
-393. |  4100297       RVT    December 4, 2024 |
-429. |  4100553        SM   December 16, 2024 |
-465. |  4100572       YFH   December 24, 2024 |
-492. |  4100443       KDP     January 3, 2025 |
-     |----------------------------------------|
-520. |  4100455       KDP     January 9, 2025 |
-536. |  4100461       KDR    January 13, 2025 |
-575. |  4100641       HAR    January 31, 2025 |
-580. |  4100644       HAR    February 3, 2025 |
-587. |  4100674       AHT    February 3, 2025 |
-     |----------------------------------------|
-590. |  4100675       ADN    February 4, 2025 |
-594. |  4100677       AHT    February 5, 2025 |
-598. |  4100646        DR    February 6, 2025 |
-601. |  4100678        AT    February 6, 2025 |
-605. |  4100679       AHT   February 10, 2025 |
-     |----------------------------------------|
-607. |  4100647       HAR   February 10, 2025 |
-610. |  4100473       RVT   February 11, 2025 |
-611. |  4100681       AHT   February 11, 2025 |
-614. |  4100680       AHT   February 11, 2025 |
-615. |  4100803       ADN   February 11, 2025 |
-     |----------------------------------------|
-617. |  4100683       AHT   February 12, 2025 |
-620. |  4100805       ADN   February 14, 2025 |
-623. |  4100807       ADN   February 14, 2025 |
-624. |  4100806       ADN   February 14, 2025 |
-625. |  4100765        SM   February 17, 2025 |
-     |----------------------------------------|
-628. |  4100809       ADN   February 17, 2025 |
-629. |  4100761        SM   February 17, 2025 |
-633. |  4100808       ADN   February 17, 2025 |
-634. |  4100684       AHT   February 17, 2025 |
-635. |  4100649        DR   February 17, 2025 |
-     |----------------------------------------|
-639. |  4100685       AHT   February 18, 2025 |
-641. |  4100474       RVT   February 18, 2025 |
-643. |  4100475       RVT   February 19, 2025 |
-644. |  4100686       AHT   February 19, 2025 |
-645. |  4100651        DR   February 19, 2025 |
-     |----------------------------------------|
-646. |  4100810       ADN   February 19, 2025 |
-647. |  4100619       KDP   February 19, 2025 |
-649. |  4100688       AHT   February 20, 2025 |
-650. |  4100812       ADN   February 20, 2025 |
-653. |  4100692       AHT   February 24, 2025 |
-     |----------------------------------------|
-655. |  4100811       ADN   February 24, 2025 |
-656. |  4100813       ADN   February 24, 2025 |
-657. |  4100690       AHT   February 24, 2025 |
-658. |  4100693       AHT   February 25, 2025 |
-     +----------------------------------------+
 
 tab tuberc_done if age<=18, m
 list idsubject age initial if tuberc_done==.
@@ -556,17 +469,6 @@ list idsubject initial interv_dt if tuberc_done==1 & tuberc_res==.
 
 tab sputum1, m
 
-
- Sampel dahak pertama diambil |      Freq.     Percent        Cum.
-------------------------------+-----------------------------------
-Tidak bisa mengeluarkan dahak |          8        1.58        1.58
-            Ya, dahak sewaktu |        354       69.82       71.40
-               Ya, dahak pagi |        108       21.30       92.70
-           Ya, induksi sputum |          1        0.20       92.90
-              Tidak dilakukan |         36        7.10      100.00
-------------------------------+-----------------------------------
-                        Total |        507      100.00
-
 list idsubject age initial interv_dt sputum1 sputum1_rfs sputum1_dt sputum2 tcm_result if sputum1==. 
 .
 
@@ -580,37 +482,13 @@ list idsubject initial interv_dt tcm_result if sputum2==.
 tab sputum2_rfs, m
 tab sputum2_dt, m
 
-tab tcm_type, m
-
-        Jenis |
-  pemeriksaan |
-          TCM |      Freq.     Percent        Cum.
---------------+-----------------------------------
-  Xpert Ultra |        428       84.42       84.42
-BD Max TB MDR |         35        6.90       91.32
-            . |         44        8.68      100.00
---------------+-----------------------------------
-        Total |        507      100.00
-
+tab tcm_type if tcm_result~=., m
+sort tcm_result
+br idsubject interv_dt rec_loc tcm_type tcm_result if (tcm_type==. & tcm_result~=.) | (tcm_type~=. & tcm_result==.)
 tab tcm_dt, m
 list idsubject if tcm_dt==. & tcm_type!=.
 
 tab tcm_result, m
-
-                  Hasil pemeriksaan TCM |      Freq.     Percent        Cum.
-----------------------------------------+-----------------------------------
-                       MTB Not Detected |        393       59.46       59.46
-MTB Detected, Rif Resistance Not Detect |        115       17.40       76.85
-  MTB Detected, Rif Resistance Detected |         14        2.12       78.97
-MTB Detected, Rif Resistance Indetermin |          2        0.30       79.27
-MTB Trace Detected, Rif Resistance Inde |         12        1.82       81.09
-MTB Detected, Rif Resistance Not Detect |          1        0.15       81.24
-MTB Detected, Rif Resistance Detected,  |          1        0.15       81.39
-MTB Detected, Rif Resistance Not Detect |          1        0.15       81.54
-                               Not Done |         75       11.35       92.89
-                                      . |         47        7.11      100.00
-----------------------------------------+-----------------------------------
-                                  Total |        661      100.00
 
 list idsubject age initial interv_dt sputum1 sputum2 if tcm_result==.
 list idsubject age initial interv_dt if tcm_result==.
@@ -644,60 +522,6 @@ summarize hematocrit, d
 tab hiv_test, m
 list idsubject initial hiv hiv_test if hiv==1 | hiv_test==1
 list idsubject hiv_test blood_test if hiv_test==.
-
-    | idsubj~t   hiv_test   blood_~t |
-
-187. |  4100211          .      Tidak |
-189. |  4100215          .      Tidak |
-200. |  4100226          .      Tidak |
-202. |  4100228          .         Ya |
-203. |  4100229          .         Ya |
-     |--------------------------------|
-204. |  4100230          .         Ya |
-205. |  4100231          .         Ya |
-206. |  4100232          .         Ya |
-207. |  4100233          .         Ya |
-208. |  4100234          .         Ya |
-     |--------------------------------|
-209. |  4100235          .      Tidak |
-210. |  4100237          .         Ya |
-211. |  4100238          .         Ya |
-212. |  4100239          .         Ya |
-213. |  4100301          .      Tidak |
-     |--------------------------------|
-220. |  4100308          .      Tidak |
-221. |  4100309          .      Tidak |
-222. |  4100310          .      Tidak |
-223. |  4100311          .      Tidak |
-228. |  4100316          .      Tidak |
-     |--------------------------------|
-229. |  4100317          .      Tidak |
-230. |  4100319          .      Tidak |
-237. |  4100326          .      Tidak |
-238. |  4100327          .      Tidak |
-241. |  4100331          .      Tidak |
-     |--------------------------------|
-243. |  4100333          .      Tidak |
-244. |  4100334          .      Tidak |
-246. |  4100336          .         Ya |
-247. |  4100337          .      Tidak |
-248. |  4100338          .         Ya |
-     |--------------------------------|
-249. |  4100339          .         Ya |
-250. |  4100340          .         Ya |
-251. |  4100341          .         Ya |
-252. |  4100342          .         Ya |
-253. |  4100343          .         Ya |
-     |--------------------------------|
-254. |  4100344          .         Ya |
-255. |  4100345          .      Tidak |
-256. |  4100346          .      Tidak |
-257. |  4100347          .      Tidak |
-258. |  4100348          .      Tidak |
-     |--------------------------------|
-259. |  4100351          .      Tidak |
-     +--------------------------------+
-
 
 tab poc_hba1c, m
 list idsubject if poc_hba1c==.

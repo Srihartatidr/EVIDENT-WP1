@@ -1,0 +1,78 @@
+// Cek durasi tanggal kultur ke hasil kultur //
+gen durasikultur=culture_res_dt-cult_ino_dt
+
+// Bagi hasil kultur menjadi 28 hari atau lebih //
+gen durasikulturcat=.
+replace durasikulturcat=0 if durasikultur<=28
+replace durasikulturcat=1 if (durasikultur>28 & durasikultur~=.) & culture_result==3
+label define durasikulturlab 0 "<=28 days" 1 ">28 days"
+label values durasikulturcat durasikulturlab
+tab durasikulturcat, m
+sort durasikultur
+br idsubject age interv_dt sputum1_c cult_ino_dt culture_res_dt durasikultur durasikulturcat culture_result cult_ident
+
+// bagi jadi sampel fresh atau bioarchive plts //
+gen date_only_plts = dofc(dt_resswab_pluslife)
+format date_only_plts %td
+
+gen date_only2_plts = dofc(dt_swab_pluslife)
+format date_only2_plts %td
+
+gen rentangplts=date_only_plts - date_only2_plts
+
+br date_only_plts date_only2_plts rentang
+sort rentangplts
+gen rentangcat=.
+replace rentangcat=0 if rentangplts<14
+replace rentangcat=1 if rentangplts>=14 & rentangplts~=.
+
+gen bioplts=.
+replace bioplts=0 if rentangplts<14
+replace bioplts=1 if rentangplts>=14 & rentangplts~=.
+label define bioarchivelab 0 "Fresh" 1 "Bioarchive"
+label values bioplts bioarchivelab
+
+br idsubject interv_dt dt_swab_pluslife dt_resswab_pluslife res_swab_pluslife culture_result rentangplts rentangcat bioplts
+
+// bagi jadi sampel fresh atau bioarchive xpertts //
+// tanggal sampling //
+gen date_only_xts = dofc(dt_xpertultra)
+format date_only_xts %td
+
+// tanggal hasil keluar //
+gen date_only2_xts = dofc(dtt_res_xpertu)
+format date_only2_xts %td
+
+gen rentangxts=date_only2_xts - date_only_xts
+
+br date_only_xts date_only2_xts rentangxts
+sort rentangxts
+gen rentangcatxts=.
+replace rentangcatxts=0 if rentangxts<14
+replace rentangcatxts=1 if rentangxts>=14
+
+gen bioarchivexts=.
+replace bioarchivexts=0 if rentangcatxts==0
+replace bioarchivexts=1 if rentangcatxts==1
+label values bioarchivexts bioarchivelab
+
+br idsubject interv_dt dt_xpertultra dtt_res_xpertu rentangxts rentangcatxts
+
+// hitung durasi tanggal sampel tes indeks ke reference test //
+
+gen durasiic=date_only-sputum1_dt_2
+summarize durasiic, d
+br idsubject interv_dt sputum1_dt_2 dt_swab_pluslife durasiic
+sort durasiic
+
+
+// hitung durasi tanggal sampel tes indeks ke reference test //
+gen date_onlyss = dofc(dt_sput_pluslife)
+format date_onlyss %td
+
+
+//
+gen durasiicss=date_onlyss-sputum1_dt_2
+summarize durasiicss, d
+br idsubject interv_dt sputum1_dt_2 dt_sput_pluslife durasiicss
+sort durasiicss

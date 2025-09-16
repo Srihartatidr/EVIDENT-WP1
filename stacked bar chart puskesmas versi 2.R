@@ -4,9 +4,9 @@ library(ggtext)  # for rich text support
 
 # 1. Data
 df <- data.frame(
-  Site = c("PKM Ahmad Yani", "PKM Ahmad Yani", "PKM Astana Anyar", "PKM Astana Anyar", "PKM Cigadung", "PKM Cigadung", "PKM Cijagra Baru", "PKM Cijagra Baru", "PKM Cijagra Lama", "PKM Cijagra Lama", "PKM Cipaku", "PKM Cipaku", "PKM Ciumbuleuit", "PKM Ciumbuleuit", "PKM Gumuruh", "PKM Gumuruh", "PKM Neglasari", "PKM Neglasari", "PKM Pagarsih", "PKM Pagarsih", "PKM Pelindung Hewan", "PKM Pelindung Hewan", "PKM Suryalaya", "PKM Suryalaya"),
-  AgeGroup = c("Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+"),
-  Count = c(5, 48, 6, 15, 3, 9, 0, 2, 3, 14, 0, 6, 3, 16, 3, 13, 6, 35, 0, 17, 10, 76, 0, 12)
+  Site = c("PKM Ahmad Yani", "PKM Ahmad Yani", "PKM Astana Anyar", "PKM Astana Anyar", "PKM Ciumbuleuit", "PKM Ciumbuleuit", "PKM Gumuruh", "PKM Gumuruh", "PKM Neglasari", "PKM Neglasari", "PKM Pelindung Hewan", "PKM Pelindung Hewan"),
+  AgeGroup = c("Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+"),
+  Count = c(5, 49, 6, 16, 3, 16, 4, 15, 6, 36, 17, 82)
 )
 
 # 2. Compute midpoint for centered label

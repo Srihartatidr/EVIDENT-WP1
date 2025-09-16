@@ -1,8 +1,22 @@
-generate agecat=.
-replace agecat=1 if age<15
-replace agecat=2 if age>=15
-label define agecatlab 1 "Usia 0-14 tahun" 2 "Usia 15+ tahun"
-label values agecat agecatlab
+// open new file //
+// run data cleaning //
+// run data preparation //
+// run drop if willing==0 //
+
+save "D:\EVIDENT WP1 Data\250903_all pasien.dta"
+file D:\EVIDENT WP1 Data\250903_all pasien.dta saved
+
+//dropping sampel yang samplingnya kurang dari 15 detik!!
+drop if idsubject==4100466
+drop if idsubject==4100467
+drop if idsubject==4100717
+drop if idsubject==4100718
+
+// dropping early exclusion //
+drop if idsubject==4100074 | idsubject==4100689 | idsubject==4100974 | idsubject==4100455
+
+// 882 obs //
+// save as //
 
 // tabel 2x2 //
 tab culture_result2 res_swab_pluslife, m
@@ -10,11 +24,11 @@ tab culture_result2 res_swab_pluslife, m
 culture_re |         Hasil pemeriksaan Usap lidah Pluslife
      sult2 |  Negative   Positive  Error/Inv   Not Done          . |     Total
 -----------+-------------------------------------------------------+----------
-  negative |       466          7          1         48         97 |       619 
-  positive |        29         81          0         16         24 |       150 
-       999 |        99          2          2         31        133 |       267 
+  negative |       647          9          1        149         85 |       891 
+  positive |        37         97          0         53         15 |       202 
+       999 |        89          3          0         29         19 |       140 
 -----------+-------------------------------------------------------+----------
-     Total |       594         90          3         95        254 |     1,036 
+     Total |       773        109          1        231        119 |     1,233 
 
 keep if res_swab_pluslife==0 | res_swab_pluslife==1
 tab culture_result2 res_swab_pluslife, m
@@ -23,62 +37,77 @@ tab culture_result2 res_swab_pluslife, m
 culture_re |  Usap lidah Pluslife
      sult2 |  Negative   Positive |     Total
 -----------+----------------------+----------
-  negative |       466          7 |       473 
-  positive |        29         81 |       110 
-       999 |        99          2 |       101 
+  negative |       647          9 |       656 
+  positive |        37         97 |       134 
+       999 |        89          3 |        92 
 -----------+----------------------+----------
-     Total |       594         90 |       684 
+     Total |       773        109 |       882 
 
-// ada 684 pemeriksaan pluslife TS, lihat durasi sampling nya
+// ada 882 pemeriksaan pluslife TS, lihat durasi sampling nya
 tab res_swab_pluslife sampling30, m
 
         Hasil |
   pemeriksaan |
    Usap lidah |      sampling30
-     Pluslife |         0          1 |     Total
+     Pluslife |      15-s       30-s |     Total
 --------------+----------------------+----------
-     Negative |       375        219 |       594 
-     Positive |        72         18 |        90 
+     Negative |       385        388 |       773 
+     Positive |        77         32 |       109 
 --------------+----------------------+----------
-        Total |       447        237 |       684 
+        Total |       462        420 |       882 
 
-// ada 447 sampling 15 detik, cek berapa yang ada hasil kultur nya
+// ada 462 sampling 15 detik, cek berapa yang ada hasil kultur nya
 tab res_swab_pluslife culture_result2 if sampling30==0, m
-	
+		
         Hasil |
   pemeriksaan |
    Usap lidah |         culture_result2
      Pluslife |  negative   positive        999 |     Total
 --------------+---------------------------------+----------
-     Negative |       320         28         27 |       375 
-     Positive |         6         65          1 |        72 
+     Negative |       330         28         27 |       385 
+     Positive |         6         70          1 |        77 
 --------------+---------------------------------+----------
-        Total |       326         93         28 |       447 
+        Total |       336         98         28 |       462 
 
 tab res_swab_pluslife culture_result2 if sampling30==0 & culture_result2~=999, m
-
+		
         Hasil |
   pemeriksaan |
    Usap lidah |    culture_result2
      Pluslife |  negative   positive |     Total
 --------------+----------------------+----------
-     Negative |       320         28 |       348 
-     Positive |         6         65 |        71 
+     Negative |       330         28 |       358 
+     Positive |         6         70 |        76 
 --------------+----------------------+----------
-        Total |       326         93 |       419 
+        Total |       336         98 |       434 
 
-// ada 419 sampel 15 detik, cek pembagian umur nya:
+// ada 434 sampel 15 detik, cek pembagian umur nya:
 tab agecat if sampling30==0 & culture_result2~=999
 
-
          agecat |      Freq.     Percent        Cum.
 ----------------+-----------------------------------
-Usia 0-14 tahun |         68       16.23       16.23
- Usia 15+ tahun |        351       83.77      100.00
+Usia 0-14 tahun |         70       16.13       16.13
+ Usia 15+ tahun |        364       83.87      100.00
 ----------------+-----------------------------------
-          Total |        419      100.00
+          Total |        434      100.00
+		  
+// cek fresh-bioarchive pada sampel 15s //
 
-// sekarang, cek yang sampling 30 detik
+tab bioplts agecat if sampling30==0 & culture_result2~=999, m col
+
+           |        agecat
+   bioplts | Usia 0-14  Usia 15+  |     Total
+-----------+----------------------+----------
+         0 |        69        330 |       399 
+           |     98.57      90.66 |     91.94 
+-----------+----------------------+----------
+         1 |         1         34 |        35 
+           |      1.43       9.34 |      8.06 
+-----------+----------------------+----------
+     Total |        70        364 |       434 
+           |    100.00     100.00 |    100.00 
+
+// sekarang, cek yang sampling 30 detik, ada berapa yang ada hasil kultur nya //
 tab res_swab_pluslife culture_result2 if sampling30==1, m
 
         Hasil |
@@ -86,97 +115,106 @@ tab res_swab_pluslife culture_result2 if sampling30==1, m
    Usap lidah |         culture_result2
      Pluslife |  negative   positive        999 |     Total
 --------------+---------------------------------+----------
-     Negative |       146          1         72 |       219 
-     Positive |         1         16          1 |        18 
+     Negative |       317          9         62 |       388 
+     Positive |         3         27          2 |        32 
 --------------+---------------------------------+----------
-        Total |       147         17         73 |       237 
+        Total |       320         36         64 |       420 
 
-// ada 237  tes, tapi 73 kultur nya 999, apakah ada sampel, atau gimana?
-tab sputum1_c res_swab_pluslife if culture_result2==999
+// ada 420  tes, tapi 64 kultur nya 999, apakah tidak ada sampel, atau gimana?
+// dari 64: 40 memang tidak ada kultur, 24 ada sampel tapi belum ada hasil //
+tab sputum1_c culture_result2 if culture_result2==999 & sampling30==1, m
 
-                      |   Hasil pemeriksaan
- Sampel dahak pertama |  Usap lidah Pluslife
-              diambil |  Negative   Positive |     Total
-----------------------+----------------------+----------
-Tidak bisa mengeluark |        44          0 |        44 
-    Ya, dahak sewaktu |        42          2 |        44 
-      Tidak dilakukan |        13          0 |        13 
-----------------------+----------------------+----------
-                Total |        99          2 |       101 
+                      | culture_re
+ Sampel dahak pertama |   sult2
+              diambil |       999 |     Total
+----------------------+-----------+----------
+Tidak bisa mengeluark |        30 |        30 
+    Ya, dahak sewaktu |        24 |        24 
+      Tidak dilakukan |        10 |        10 
+----------------------+-----------+----------
+                Total |        64 |        64 
 
-// ada 44 pasien yang ada dahaknya, cek tanggal mengeluarkan dahaknya:
+list interv_dt idsubject sputum1_c if culture_result2==999 & sputum1_c==1 & sampling30==1
+
+     +--------------------------------------------------+
+     |         interv_dt   idsubj~t           sputum1_c |
+     |--------------------------------------------------|
+846. |     July 15, 2025    4101330   Ya, dahak sewaktu |
+848. |     July 16, 2025    4101245   Ya, dahak sewaktu |
+850. |     July 16, 2025    4101247   Ya, dahak sewaktu |
+857. |     July 16, 2025    4101303   Ya, dahak sewaktu |
+860. |     July 17, 2025    4100987   Ya, dahak sewaktu |
+     |--------------------------------------------------|
+861. |     July 17, 2025    4101363   Ya, dahak sewaktu |
+862. |     July 17, 2025    4101307   Ya, dahak sewaktu |
+863. |     July 17, 2025    4101250   Ya, dahak sewaktu |
+864. |     July 17, 2025    4101306   Ya, dahak sewaktu |
+865. |     July 18, 2025    4101356   Ya, dahak sewaktu |
+     |--------------------------------------------------|
+866. |     July 18, 2025    4101308   Ya, dahak sewaktu |
+867. |     July 18, 2025    4101364   Ya, dahak sewaktu |
+869. |     July 21, 2025    4101252   Ya, dahak sewaktu |
+870. |     July 21, 2025    4101254   Ya, dahak sewaktu |
+871. |     July 21, 2025    4101365   Ya, dahak sewaktu |
+     |--------------------------------------------------|
+872. |     July 21, 2025    4101253   Ya, dahak sewaktu |
+873. |     July 21, 2025    4101366   Ya, dahak sewaktu |
+874. |     July 21, 2025    4101255   Ya, dahak sewaktu |
+875. |     July 21, 2025    4101332   Ya, dahak sewaktu |
+878. |     July 21, 2025    4101345   Ya, dahak sewaktu |
+     |--------------------------------------------------|
+879. |     July 22, 2025    4101346   Ya, dahak sewaktu |
+880. |     July 22, 2025    4101368   Ya, dahak sewaktu |
+881. | September 2, 2025    4101347   Ya, dahak sewaktu |
+882. | September 2, 2025    4100988   Ya, dahak sewaktu |
+     +--------------------------------------------------+
+
+// ada 24 pasien yang ada dahaknya, cek tanggal mengeluarkan dahaknya:
 sort sputum1_dt_2
 br idsubject age initial rec_loc sputum1_c sputum1_dt_2 if culture_result2==999 & sputum1_c==1
-// dari 44 itu, 13 pasien sepertinya tidak mengumpulkan dahak
-// jadi 21 pasien yang kulturnya belum keluar
+// jadi, ada 24 pasien yang kulturnya belum keluar
 
-// cek aja 73 pasien yang 999 itu ketang //
-br idsubject age initial rec_loc sputum1_c sputum1_dt_2 if culture_result2==999 & sputum1_c~=1
+// jadi ada 356 pasien yg ada hasil kultur, dan 24 yg potential ada hasil kultur //
+// a. cek kategori umur yg 356 //
+tab bioplts agecat if sampling30==1 & culture_result2~=999
 
-// ada 237 sampling 30 detik, cek berapa yang ada hasil kultur nya
-tab res_swab_pluslife culture_result2 if sampling30==1, m
-	
-        Hasil |
-  pemeriksaan |
-   Usap lidah |         culture_result2
-     Pluslife |  negative   positive        999 |     Total
---------------+---------------------------------+----------
-     Negative |       148          1         70 |       219 
-     Positive |         1         16          1 |        18 
---------------+---------------------------------+----------
-        Total |       149         17         71 |       237 
+           |        agecat
+   bioplts | Usia 0-14  Usia 15+  |     Total
+-----------+----------------------+----------
+     Fresh |        81         97 |       178 
+Bioarchive |        52        126 |       178 
+-----------+----------------------+----------
+     Total |       133        223 |       356 
 
-tab res_swab_pluslife culture_result2 if sampling30==1 & culture_result2~=999, m
+// b. cek kategori umur yg 24 obs //
+tab bioplts agecat if sampling30==1 & culture_result2==999 & sputum1_c==1
 
-        Hasil |
-  pemeriksaan |
-   Usap lidah |    culture_result2
-     Pluslife |  negative   positive |     Total
---------------+----------------------+----------
-     Negative |       148          1 |       149 
-     Positive |         1         16 |        17 
---------------+----------------------+----------
-        Total |       149         17 |       166 
+           |        agecat
+   bioplts | Usia 0-14  Usia 15+  |     Total
+-----------+----------------------+----------
+     Fresh |         0          2 |         2 
+Bioarchive |         2         20 |        22 
+-----------+----------------------+----------
+     Total |         2         22 |        24 
 
-// ada 166 sampel 15 detik, cek pembagian umur nya:
-tab agecat if sampling30==1 & culture_result2~=999
+// cek kategori umur yg 40 obs //
+tab bioplts agecat if sampling30==1 & culture_result2==999 & sputum1_c~=1
 
-         agecat |      Freq.     Percent        Cum.
-----------------+-----------------------------------
-Usia 0-14 tahun |         74       44.58       44.58
- Usia 15+ tahun |         92       55.42      100.00
-----------------+-----------------------------------
-          Total |        166      100.00
+           |        agecat
+   bioplts | Usia 0-14  Usia 15+  |     Total
+-----------+----------------------+----------
+     Fresh |        38          1 |        39 
+Bioarchive |         0          1 |         1 
+-----------+----------------------+----------
+     Total |        38          2 |        40 
 
-// adari total 237 tes, tapi 71 kultur nya 999, apakah ada sampel, atau gimana?
-tab sputum1_c res_swab_pluslife if culture_result2==999 & sampling30==1
+// combined both of them //
+tab bioplts agecat if (sampling30==1 & culture_result2~=999) | (sampling30==1 & culture_result2==999 & sputum1_c==1), m col
 
-                      |   Hasil pemeriksaan
- Sampel dahak pertama |  Usap lidah Pluslife
-              diambil |  Negative   Positive |     Total
-----------------------+----------------------+----------
-Tidak bisa mengeluark |        31          0 |        31 
-    Ya, dahak sewaktu |        33          1 |        34 
-      Tidak dilakukan |         6          0 |         6 
-----------------------+----------------------+----------
-                Total |        70          1 |        71 
-
-// ada 34 pasien yang ada dahaknya, cek tanggal mengeluarkan dahaknya:
-sort sputum1_dt_2
-br idsubject age initial rec_loc sputum1_c sputum1_dt_2 if culture_result2==999 & sputum1_c==1 & sampling30==1
-// dari 34 itu, 5 pasien sepertinya tidak mengumpulkan dahak
-// jadi 29 pasien yang kulturnya belum keluar
-
-// tabulasi lagi berdasarkan umur nya, pasien yang ada dahak dan potensi hasil kultur nya
-// tapi kita perlu recoding dulu hasil dahaknya, supaya mudah pengelompokkannya
-replace culture_result2=1 if sputum1_c==1 & culture_result2==999
-
-// ulang lagi tabulasinya:
-tab agecat if sampling30==1 & culture_result2~=999
-
-         agecat |      Freq.     Percent        Cum.
-----------------+-----------------------------------
-Usia 0-14 tahun |         81       40.50       40.50
- Usia 15+ tahun |        119       59.50      100.00
-----------------+-----------------------------------
-          Total |        200      100.00
+           |        agecat
+   bioplts | Usia 0-14  Usia 15+  |     Total
+-----------+----------------------+----------
+     Fresh |        81         99 |       180 
+Bioarchive |        54        146 |       200 
+-----------+----------------------+----------
+     Total |       135        245 |       380 

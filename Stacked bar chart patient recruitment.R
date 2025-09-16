@@ -4,9 +4,9 @@ library(ggtext)  # for rich text support
 
 # 1. Data
 df <- data.frame(
-  Site = c("Puskesmas", "Puskesmas", "Lung hospital", "Lung hospital", "Lung clinic", "Lung clinic"),
+  Site = c("Lung hospital", "Lung hospital", "Puskesmas", "Puskesmas", "Lung clinic", "Lung clinic"),
   AgeGroup = c("Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+", "Aged 0-14", "Aged 15+"),
-  Count = c(40, 245,21, 235, 231, 379)
+  Count = c(21, 238, 50, 302, 258, 405)
 )
 
 # 2. Add percent per site, formatted label, and position
@@ -52,7 +52,7 @@ stacked <- ggplot(df, aes(x = Site, y = Count, fill = AgeGroup)) +
   ) +
   coord_flip() +
   scale_fill_manual(
-    values = c("Aged 15+" = "#A2B5CD", "Aged 0-14" = "#CD8C95")
+    values = c("Aged 0-14" = "#CD8C95", "Aged 15+" = "#A2B5CD")
   ) +
   labs(
     title = "Distribution of Patient Recruitment by Age Group and Recruitment Sites",

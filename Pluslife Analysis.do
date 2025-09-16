@@ -341,9 +341,9 @@ drop if res_sput_pluslife==3
 label define res_sput_pluslife2 1 "negative" 2 "positive"
 label values res_sput_pluslife2 res_sput_pluslife2
 
-tab res_sput_pluslife2 xpert_sputum if res_sput_pluslife2~=999
-kap res_sput_pluslife2 xpert_sputum if res_sput_pluslife2~=999
-cii proportions 261 240
+tab res_sput_pluslife2 xpertsputum2 if res_sput_pluslife2~=999
+kap res_sput_pluslife2 xpertsputum2 if res_sput_pluslife2~=999
+cii proportions 589 550
 save "C:\Users\rcund\Documents\1. EVIDENT\1. WP1 - Clinical Validation Studies\Data\20250212 WP1-pluslife sputum.dta", replace
 
 // PERFORMANCE XPERT SPUTUM //
